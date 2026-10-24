@@ -1,0 +1,70 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+scratch/node_modules/
+
+# Environment and Secret Files
+.env
+.env.*
+!.env.example
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Uploaded media (Recordings & Profile Photos)
+backend/uploads/*
+!backend/uploads/.gitkeep
+uploads/
+
+# Personal / College Research Papers & Drafts
+EduScribe_AI_Research_Paper*
+
+# Scratch & Temporary Directories
+scratch/
+tmp/
+
+# Editor & OS Metadata
+.DS_Store
+**/.DS_Store
+.vscode/
+.claude/
+.idea/
+.venv/
+
+# Build & Dist Artifacts
+dist/
+dist-ssr/
+build/
+*.local
+
+# Logs & Error Dumps
+*.log
+firebase-debug.log
+backend/error.log
+backend/startup_error.txt
+backend/error_clean.txt
+frontend/lint_output.txt
+frontend/out.json
+frontend/out2.json
+
+# Development & One-Off Maintenance Scripts
+backend/add_col.js
+backend/check_db.js
+backend/check_users.js
+backend/fix_it.js
+backend/migrate_*.js
+backend/reset_demo_credentials.js
+backend/process_all_lectures.js
+backend/test_*.js
+backend/debug_run.js
+backend/dummy.wav
+backend/beep.ogg
