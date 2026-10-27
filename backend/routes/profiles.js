@@ -52,30 +52,47 @@ router.put('/me', authenticateToken, async (req, res) => {
     const user_id = req.user.id;
     const { name, email, password, institution, course, subject, bio, qualification, experience, semester, learning_style } = req.body;
     
-    if (!name || !email) {
-        return res.status(400).json({ error: "Name and email are required" });
-    }
+    db.get('SELECT name, email, institution, course, subject, bio, qualification, experience, semester, learning_style FROM User WHERE id = ?', [user_id], async (err, currentUser) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (!currentUser) return res.status(404).json({ error: 'User not found' });
 
-    try {
-        let query, params;
+        const finalName = (name !== undefined && name !== null && String(name).trim() !== '') ? String(name).trim() : currentUser.name;
+        const finalEmail = (email !== undefined && email !== null && String(email).trim() !== '') ? String(email).trim() : currentUser.email;
 
-        if (password) {
-            const salt = await bcrypt.genSalt(10);
-            const hashedPassword = await bcrypt.hash(password, salt);
-            query = `UPDATE User SET name=?, email=?, password=?, institution=?, course=?, subject=?, bio=?, qualification=?, experience=?, semester=?, learning_style=? WHERE id=?`;
-            params = [name, email, hashedPassword, institution||null, course||null, subject||null, bio||null, qualification||null, experience||null, semester||null, learning_style||null, user_id];
-        } else {
-            query = `UPDATE User SET name=?, email=?, institution=?, course=?, subject=?, bio=?, qualification=?, experience=?, semester=?, learning_style=? WHERE id=?`;
-            params = [name, email, institution||null, course||null, subject||null, bio||null, qualification||null, experience||null, semester||null, learning_style||null, user_id];
+        if (!finalName || !finalEmail) {
+            return res.status(400).json({ error: "Name and email are required" });
         }
 
-        db.run(query, params, function(err) {
-            if (err) return res.status(500).json({ error: err.message });
-            res.json({ message: 'Profile updated successfully' });
-        });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+        const finalInstitution = institution !== undefined ? institution : currentUser.institution;
+        const finalCourse = course !== undefined ? course : currentUser.course;
+        const finalSubject = subject !== undefined ? subject : currentUser.subject;
+        const finalBio = bio !== undefined ? bio : currentUser.bio;
+        const finalQualification = qualification !== undefined ? qualification : currentUser.qualification;
+        const finalExperience = experience !== undefined ? experience : currentUser.experience;
+        const finalSemester = semester !== undefined ? semester : currentUser.semester;
+        const finalLearningStyle = learning_style !== undefined ? learning_style : currentUser.learning_style;
+
+        try {
+            let query, params;
+
+            if (password && password.trim()) {
+                const salt = await bcrypt.genSalt(10);
+                const hashedPassword = await bcrypt.hash(password, salt);
+                query = `UPDATE User SET name=?, email=?, password=?, institution=?, course=?, subject=?, bio=?, qualification=?, experience=?, semester=?, learning_style=? WHERE id=?`;
+                params = [finalName, finalEmail, hashedPassword, finalInstitution || null, finalCourse || null, finalSubject || null, finalBio || null, finalQualification || null, finalExperience || null, finalSemester || null, finalLearningStyle || null, user_id];
+            } else {
+                query = `UPDATE User SET name=?, email=?, institution=?, course=?, subject=?, bio=?, qualification=?, experience=?, semester=?, learning_style=? WHERE id=?`;
+                params = [finalName, finalEmail, finalInstitution || null, finalCourse || null, finalSubject || null, finalBio || null, finalQualification || null, finalExperience || null, finalSemester || null, finalLearningStyle || null, user_id];
+            }
+
+            db.run(query, params, function(updateErr) {
+                if (updateErr) return res.status(500).json({ error: updateErr.message });
+                res.json({ message: 'Profile updated successfully' });
+            });
+        } catch (catchedErr) {
+            res.status(500).json({ error: catchedErr.message });
+        }
+    });
 });
 
 module.exports = router;

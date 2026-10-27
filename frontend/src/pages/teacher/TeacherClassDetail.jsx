@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import Navbar from '../../components/Navbar';
 import ConfirmModal from '../../components/ConfirmModal';
+import API_BASE from '../../config';
 
 /* ─────────────────────────────────────────────
    RECORDING STUDIO — full-screen glass overlay
@@ -933,11 +934,11 @@ const TeacherClassDetail = () => {
       const token = localStorage.getItem('token');
       const payload = {
         studentName: stu.name,
-        attendanceStr: `\${attendancePercent}% (\${stu.lectures_completed || 0}/\${studentsData.totalLectures})`,
+        attendanceStr: `${attendancePercent}% (${stu.lectures_completed || 0}/${studentsData.totalLectures})`,
         avgScoreStr: avgScoreStr
       };
-      const res = await axios.post(`/api/classrooms/\${id}/students/\${stu.student_id}/alert`, payload, {
-        headers: { Authorization: `Bearer \${token}` }
+      const res = await axios.post(`/api/classrooms/${id}/students/${stu.student_id}/alert`, payload, {
+        headers: { Authorization: `Bearer ${token}` }
       });
       setInterventionAlerts(prev => ({ ...prev, [stu.student_id]: res.data.alertPlan }));
     } catch (err) {
@@ -1140,7 +1141,7 @@ const TeacherClassDetail = () => {
                   return (
                     <div key={stu.student_id} style={{ padding: '1rem', background: 'var(--bg-color)', borderRadius: '0.75rem', border: `1px solid ${isStruggling ? 'rgba(239,68,68,0.3)' : 'var(--border-color)'}` }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                        <img src={stu.profile_picture ? (stu.profile_picture.startsWith('http') ? stu.profile_picture : `http://localhost:5000${stu.profile_picture}`) : `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(stu.name)}`} alt={stu.name} style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover' }} />
+                        <img src={stu.profile_picture ? (stu.profile_picture.startsWith('http') ? stu.profile_picture : `${API_BASE}${stu.profile_picture}`) : `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(stu.name)}`} alt={stu.name} style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover' }} />
                         <div style={{ fontWeight: 600, fontSize: '0.95rem', color: isStruggling ? '#ef4444' : 'var(--text-color)' }}>{stu.name}</div>
                         {isStruggling && <AlertCircle size={14} color="#ef4444" style={{ marginLeft: 'auto' }} title="Struggling Student" />}
                       </div>

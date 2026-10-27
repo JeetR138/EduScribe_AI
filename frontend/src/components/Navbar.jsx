@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Home, User, LogOut, Mic } from 'lucide-react';
+import API_BASE from '../config';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -42,6 +43,7 @@ const Navbar = () => {
       borderBottom: '1px solid var(--border-color)'
     }}>
       <div 
+        id="nav-logo-btn"
         onClick={() => navigate('/')} 
         style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.75rem' }}
       >
@@ -60,6 +62,7 @@ const Navbar = () => {
 
       <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
         <button 
+          id="nav-home-btn"
           onClick={() => navigate('/')}
           className="nav-link"
           style={{ background: 'none', border: 'none', color: 'var(--secondary-color)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, padding: '0.6rem 1rem', borderRadius: '0.75rem', transition: 'all 0.3s ease' }}
@@ -69,6 +72,7 @@ const Navbar = () => {
           <Home size={18} /> Home
         </button>
         <button 
+          id="nav-account-btn"
           onClick={() => navigate('/profile')}
           className="nav-link"
           style={{ background: 'none', border: 'none', color: 'var(--secondary-color)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, padding: '0.6rem 1rem', borderRadius: '0.75rem', transition: 'all 0.3s ease' }}
@@ -77,7 +81,7 @@ const Navbar = () => {
         >
           {profilePicture ? (
             <img 
-              src={profilePicture.startsWith('http') ? profilePicture : `http://localhost:5000${profilePicture}`}
+              src={profilePicture.startsWith('http') ? profilePicture : `${API_BASE}${profilePicture}`}
               alt="Profile"
               style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--primary-color)', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
             />
@@ -88,6 +92,7 @@ const Navbar = () => {
         </button>
         <div style={{ width: '1px', height: '24px', background: 'var(--border-color)', margin: '0 0.5rem' }}></div>
         <button 
+          id="nav-exit-btn"
           onClick={handleLogout}
           style={{ background: 'rgba(239, 68, 68, 0.1)', border: 'none', color: '#ef4444', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, padding: '0.6rem 1rem', borderRadius: '0.75rem', transition: 'all 0.3s ease' }}
           onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}

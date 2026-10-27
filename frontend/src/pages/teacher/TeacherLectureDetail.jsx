@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ArrowLeft, Play, RefreshCw, FileText, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Play, RefreshCw, FileText, CheckCircle2, Volume2, Square } from 'lucide-react';
 import Navbar from '../../components/Navbar';
 import ConfirmModal from '../../components/ConfirmModal';
+import API_BASE from '../../config';
 
 const TeacherLectureDetail = () => {
   const { id } = useParams();
@@ -17,6 +18,27 @@ const TeacherLectureDetail = () => {
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [studentScores, setStudentScores] = useState([]);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
+  const toggleTTS = () => {
+    if (!lecture || !lecture.summaries || !lecture.summaries[summaryLevel]) return;
+    
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+    } else {
+      const textToRead = lecture.summaries[summaryLevel].replace(/^\d+\.\s*/gm, '');
+      const utterance = new SpeechSynthesisUtterance(textToRead);
+      utterance.onend = () => setIsSpeaking(false);
+      utterance.onerror = () => setIsSpeaking(false);
+      window.speechSynthesis.speak(utterance);
+      setIsSpeaking(true);
+    }
+  };
+
+  useEffect(() => {
+    return () => window.speechSynthesis.cancel();
+  }, []);
 
   const handleNextCard = () => {
     setIsFlipped(false);
@@ -194,7 +216,12 @@ const TeacherLectureDetail = () => {
           {lecture.audio_file && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: 'var(--input-bg)', padding: '1rem', borderRadius: '1rem', border: '1px solid var(--border-color)' }}>
               <Play size={20} color="var(--primary-color)" />
-              <audio ref={audioRef} src={`\${lecture.audio_file}`} controls style={{ flex: 1, height: '40px', outline: 'none' }} />
+              <audio 
+                ref={audioRef} 
+                src={lecture.audio_file.startsWith('http') ? lecture.audio_file : `${API_BASE}${lecture.audio_file.startsWith('/') ? '' : '/'}${lecture.audio_file}`} 
+                controls 
+                style={{ flex: 1, height: '40px', outline: 'none' }} 
+              />
               <select 
                 value={playbackSpeed} 
                 onChange={handleSpeedChange}
@@ -284,17 +311,34 @@ const TeacherLectureDetail = () => {
         {/* TAB CONTENTS */}
         {activeTab === 'notes' && (
           <div className="auth-card" style={{ maxWidth: '100%', padding: '2.5rem', animation: 'fadeIn 0.3s' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-             <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><FileText size={20} /> AI Summary Options</h2>
-             <select 
-                value={summaryLevel} 
-                onChange={(e) => setSummaryLevel(e.target.value)}
-                style={{ padding: '0.5rem 1rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', background: 'var(--input-bg)', color: 'var(--text-color)', fontWeight: 'bold' }}
-              >
-                <option value="easy">Easy (Bullet Summary)</option>
-                <option value="medium">Medium (Quick Understanding)</option>
-                <option value="detailed">High (Detailed Study Notes)</option>
-              </select>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+             <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0 }}><FileText size={20} /> AI Summary Options</h2>
+             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+               {lecture.summaries?.[summaryLevel] && (
+                 <button 
+                   onClick={toggleTTS}
+                   style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', borderRadius: '0.5rem', border: `1px solid ${isSpeaking ? '#ef4444' : 'var(--primary-color)'}`, background: isSpeaking ? 'rgba(239, 68, 68, 0.1)' : 'rgba(99, 102, 241, 0.1)', color: isSpeaking ? '#ef4444' : 'var(--primary-color)', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
+                 >
+                   {isSpeaking ? <Square size={16} /> : <Volume2 size={16} />}
+                   {isSpeaking ? 'Stop Reading' : 'Listen Notes'}
+                 </button>
+               )}
+               <select 
+                  value={summaryLevel} 
+                  onChange={(e) => {
+                    setSummaryLevel(e.target.value);
+                    if (isSpeaking) {
+                      window.speechSynthesis.cancel();
+                      setIsSpeaking(false);
+                    }
+                  }}
+                  style={{ padding: '0.5rem 1rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', background: 'var(--input-bg)', color: 'var(--text-color)', fontWeight: 'bold' }}
+                >
+                  <option value="easy">Easy (Bullet Summary)</option>
+                  <option value="medium">Medium (Quick Understanding)</option>
+                  <option value="detailed">High (Detailed Study Notes)</option>
+                </select>
+             </div>
             </div>
             
             <p style={{ color: 'var(--secondary-color)', fontSize: '0.9rem', marginBottom: '1.5rem', fontStyle: 'italic' }}>
@@ -417,14 +461,14 @@ const TeacherLectureDetail = () => {
                             key={opt}
                             style={{ 
                               padding: '1rem', 
-                              border: `2px solid \${mcq.correct_option === opt ? '#10b981' : 'var(--border-color)'}`, 
+                              border: `2px solid ${mcq.correct_option === opt ? '#10b981' : 'var(--border-color)'}`, 
                               borderRadius: '0.75rem', 
                               background: mcq.correct_option === opt ? 'rgba(16, 185, 129, 0.1)' : 'var(--input-bg)',
                               display: 'flex', gap: '1rem'
                             }}
                           >
                             <strong style={{ color: mcq.correct_option === opt ? '#10b981' : 'var(--text-color)' }}>{opt}.</strong>
-                            <span>{mcq[`option_\${opt.toLowerCase()}`]}</span>
+                            <span>{mcq[`option_${opt.toLowerCase()}`]}</span>
                           </div>
                         ))}
                       </div>

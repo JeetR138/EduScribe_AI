@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ArrowLeft, Play, RefreshCw, FileText, CheckCircle2, ChevronRight, ChevronLeft, Bookmark, Star, Send, MessageCircle, X, Volume2, Square } from 'lucide-react';
 import Navbar from '../../components/Navbar';
+import API_BASE from '../../config';
 
 const StudyLecture = () => {
   const { id } = useParams();
@@ -227,14 +228,19 @@ const StudyLecture = () => {
         <div className="auth-card" style={{ maxWidth: '100%', padding: '2.5rem', marginBottom: '2rem', position: 'relative' }}>
           <h1 style={{ fontSize: '2.25rem', fontWeight: 800, marginBottom: '0.5rem' }}>{lecture.title}</h1>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--secondary-color)', fontSize: '1rem', fontWeight: 500, marginBottom: '2rem' }}>
-            <img src={lecture.teacher_profile_picture ? (lecture.teacher_profile_picture.startsWith('http') ? lecture.teacher_profile_picture : `http://localhost:5000${lecture.teacher_profile_picture}`) : `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(lecture.teacher_name)}`} alt={lecture.teacher_name} style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover' }} />
+            <img src={lecture.teacher_profile_picture ? (lecture.teacher_profile_picture.startsWith('http') ? lecture.teacher_profile_picture : `${API_BASE}${lecture.teacher_profile_picture}`) : `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(lecture.teacher_name)}`} alt={lecture.teacher_name} style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover' }} />
             {new Date(lecture.date).toLocaleDateString()} • {lecture.teacher_name}
           </div>
 
           {lecture.audio_file && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: 'var(--input-bg)', padding: '1rem', borderRadius: '1rem', border: '1px solid var(--border-color)' }}>
               <Play size={20} color="var(--primary-color)" />
-              <audio ref={audioRef} src={`\${lecture.audio_file}`} controls style={{ flex: 1, height: '40px', outline: 'none' }} />
+              <audio 
+                ref={audioRef} 
+                src={lecture.audio_file.startsWith('http') ? lecture.audio_file : `${API_BASE}${lecture.audio_file.startsWith('/') ? '' : '/'}${lecture.audio_file}`} 
+                controls 
+                style={{ flex: 1, height: '40px', outline: 'none' }} 
+              />
               <select 
                 value={playbackSpeed} 
                 onChange={handleSpeedChange}
@@ -330,7 +336,7 @@ const StudyLecture = () => {
                {lecture.summaries?.[summaryLevel] && (
                  <button 
                    onClick={toggleTTS}
-                   style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', borderRadius: '0.5rem', border: `1px solid \${isSpeaking ? '#ef4444' : 'var(--primary-color)'}`, background: isSpeaking ? 'rgba(239, 68, 68, 0.1)' : 'rgba(140, 157, 129, 0.1)', color: isSpeaking ? '#ef4444' : 'var(--primary-color)', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
+                   style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', borderRadius: '0.5rem', border: `1px solid ${isSpeaking ? '#ef4444' : 'var(--primary-color)'}`, background: isSpeaking ? 'rgba(239, 68, 68, 0.1)' : 'rgba(140, 157, 129, 0.1)', color: isSpeaking ? '#ef4444' : 'var(--primary-color)', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
                  >
                    {isSpeaking ? <Square size={16} /> : <Volume2 size={16} />}
                    {isSpeaking ? 'Stop Reading' : 'Listen'}
@@ -598,7 +604,7 @@ const StudyLecture = () => {
                                 <div key={opt} style={{ 
                                   padding: '1rem', 
                                   background: bg, 
-                                  border: `1px solid \${borderColor}`, 
+                                  border: `1px solid ${borderColor}`, 
                                   borderRadius: '0.75rem',
                                   display: 'flex',
                                   alignItems: 'center',
@@ -606,7 +612,7 @@ const StudyLecture = () => {
                                   color: color,
                                   fontWeight: isSelected || isCorrect ? 600 : 400
                                 }}>
-                                  <span>{opt}. {mcq[`option_\${opt.toLowerCase()}`]}</span>
+                                  <span>{opt}. {mcq[`option_${opt.toLowerCase()}`]}</span>
                                   <div style={{ fontSize: '0.85rem' }}>
                                     {isCorrect && !isSelected && <span>✓ Correct Answer</span>}
                                     {isCorrect && isSelected && <span>✓ You answered correctly</span>}

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { BookOpen, ArrowLeft, FileText, X, RefreshCw } from 'lucide-react';
 import Navbar from '../../components/Navbar';
+import API_BASE from '../../config';
 
 const StudentClassDetail = () => {
   const { id } = useParams();
@@ -37,8 +38,8 @@ const StudentClassDetail = () => {
     setIsGeneratingGuide(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get(`/api/classrooms/\${id}/study-guide`, {
-        headers: { Authorization: `Bearer \${token}` }
+      const res = await axios.get(`/api/classrooms/${id}/study-guide`, {
+        headers: { Authorization: `Bearer ${token}` }
       });
       setStudyGuideContent(res.data.studyGuide);
     } catch (err) {
@@ -125,7 +126,7 @@ const StudentClassDetail = () => {
                           )}
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: 'var(--secondary-color)' }}>
-                          <img src={lec.teacher_profile_picture ? (lec.teacher_profile_picture.startsWith('http') ? lec.teacher_profile_picture : `http://localhost:5000${lec.teacher_profile_picture}`) : `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(lec.teacher_name)}`} alt={lec.teacher_name} style={{ width: '20px', height: '20px', borderRadius: '50%', objectFit: 'cover' }} />
+                          <img src={lec.teacher_profile_picture ? (lec.teacher_profile_picture.startsWith('http') ? lec.teacher_profile_picture : `${API_BASE}${lec.teacher_profile_picture}`) : `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(lec.teacher_name)}`} alt={lec.teacher_name} style={{ width: '20px', height: '20px', borderRadius: '50%', objectFit: 'cover' }} />
                           {new Date(lec.date).toLocaleDateString()} • {lec.teacher_name}
                         </div>
                       </div>

@@ -9,16 +9,16 @@ const ProfileSetup = () => {
   const token = localStorage.getItem('token');
 
   const [formData, setFormData] = useState({
-    institution: '',
-    course: '',
+    institution: user?.institution || '',
+    course: user?.course || '',
     // Teacher-specific
-    subject: '',
-    qualification: '',
-    experience: '',
-    bio: '',
+    subject: user?.subject || '',
+    qualification: user?.qualification || '',
+    experience: user?.experience || '',
+    bio: user?.bio || '',
     // Student-specific
-    semester: '',
-    learning_style: 'reading'
+    semester: user?.semester || '',
+    learning_style: user?.learning_style || 'reading'
   });
 
   const [isSaving, setIsSaving] = useState(false);
@@ -35,12 +35,18 @@ const ProfileSetup = () => {
     setIsSaving(true);
     setError('');
     try {
-      await axios.put('/api/profiles/me', formData, {
+      const payload = {
+        name: user.name,
+        email: user.email,
+        ...formData
+      };
+      await axios.put('/api/profiles/me', payload, {
         headers: { Authorization: `Bearer ${token}` }
       });
       // Update local user object
       const updated = { ...user, ...formData };
       localStorage.setItem('user', JSON.stringify(updated));
+      window.dispatchEvent(new Event('storage'));
       navigate('/');
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to save profile. Please try again.');
@@ -75,7 +81,7 @@ const ProfileSetup = () => {
         </div>
 
         {/* Role Badge */}
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.35rem 1rem', borderRadius: '2rem', background: isTeacher ? 'var(--input-bg)' : 'rgba(16,185,129,0.1)', border: `1px solid \${isTeacher ? 'var(--primary-color)' : 'var(--success)'}`, color: isTeacher ? 'var(--primary-color)' : 'var(--success)', fontWeight: 700, fontSize: '0.85rem', marginBottom: '2rem' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.35rem 1rem', borderRadius: '2rem', background: isTeacher ? 'var(--input-bg)' : 'rgba(16,185,129,0.1)', border: `1px solid ${isTeacher ? 'var(--primary-color)' : 'var(--success)'}`, color: isTeacher ? 'var(--primary-color)' : 'var(--success)', fontWeight: 700, fontSize: '0.85rem', marginBottom: '2rem' }}>
           {isTeacher ? '🧑‍🏫 Teacher Account' : '🎓 Student Account'}
         </div>
 

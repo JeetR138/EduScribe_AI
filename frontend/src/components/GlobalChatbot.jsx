@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { MessageSquare, X, Send, Bot, HelpCircle, BookOpen, Sparkles, User } from 'lucide-react';
 import axios from 'axios';
 
 const GlobalChatbot = () => {
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('doubt'); // 'doubt' | 'guide'
   const [messages, setMessages] = useState([
@@ -73,6 +75,11 @@ const GlobalChatbot = () => {
     "What are the main features of C++?",
     "Explain Artificial Intelligence concepts"
   ];
+
+  // Do not show chatbot on authentication pages (login / signup)
+  if (location.pathname === '/login' || location.pathname === '/signup') {
+    return null;
+  }
 
   return (
     <>

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { PlusCircle, Bookmark, PlayCircle } from 'lucide-react';
 import Navbar from '../../components/Navbar';
+import API_BASE from '../../config';
 
 const StudentDashboard = () => {
   const [classrooms, setClassrooms] = useState([]);
@@ -205,7 +206,7 @@ const StudentDashboard = () => {
                   </div>
                   <h3 style={{ fontSize: '0.95rem', marginBottom: '0.35rem', color: 'var(--text-color)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{lecture.title}</h3>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                    <img src={lecture.teacher_profile_picture ? (lecture.teacher_profile_picture.startsWith('http') ? lecture.teacher_profile_picture : `http://localhost:5000${lecture.teacher_profile_picture}`) : `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(lecture.teacher_name)}`} alt={lecture.teacher_name} style={{ width: '18px', height: '18px', borderRadius: '50%', objectFit: 'cover' }} />
+                    <img src={lecture.teacher_profile_picture ? (lecture.teacher_profile_picture.startsWith('http') ? lecture.teacher_profile_picture : `${API_BASE}${lecture.teacher_profile_picture}`) : `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(lecture.teacher_name)}`} alt={lecture.teacher_name} style={{ width: '18px', height: '18px', borderRadius: '50%', objectFit: 'cover' }} />
                     {lecture.teacher_name} • {new Date(lecture.date).toLocaleDateString()}
                   </div>
                 </div>
@@ -245,7 +246,7 @@ const StudentDashboard = () => {
                   onClick={() => navigate(`/student/class/${cls.id}`)}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
                     <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-color)' }}>{cls.name}</h3>
-                    <img src={cls.teacher_profile_picture ? (cls.teacher_profile_picture.startsWith('http') ? cls.teacher_profile_picture : `http://localhost:5000${cls.teacher_profile_picture}`) : `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(cls.teacher_name)}`} alt={cls.teacher_name} style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--primary-color)' }} />
+                    <img src={cls.teacher_profile_picture ? (cls.teacher_profile_picture.startsWith('http') ? cls.teacher_profile_picture : `${API_BASE}${cls.teacher_profile_picture}`) : `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(cls.teacher_name)}`} alt={cls.teacher_name} style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--primary-color)' }} />
                   </div>
                   <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
                     Instructor: {cls.teacher_name}

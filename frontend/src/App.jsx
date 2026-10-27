@@ -23,6 +23,13 @@ const GuestRoute = ({ children }) => {
   return children;
 };
 
+// Protected Wrapper for any authenticated user
+const ProtectedRoute = ({ children }) => {
+  const user = JSON.parse(localStorage.getItem('user'));
+  if (!user) return <Navigate to="/login" replace />;
+  return children;
+};
+
 // Role-based Layout Wrapper
 const RoleProtectedRoute = ({ allowedRole, children }) => {
   const user = JSON.parse(localStorage.getItem('user'));
@@ -55,12 +62,8 @@ function App() {
         <Route path="/signup" element={<GuestRoute><Auth initialMode="signup" /></GuestRoute>} />
         
         {/* Profile Routes - Accessible to both */}
-        <Route path="/profile" element={
-          localStorage.getItem('user') ? <Profile /> : <Navigate to="/login" replace />
-        } />
-        <Route path="/profile/setup" element={
-          localStorage.getItem('user') ? <ProfileSetup /> : <Navigate to="/login" replace />
-        } />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/profile/setup" element={<ProtectedRoute><ProfileSetup /></ProtectedRoute>} />
         
         {/* Teacher Routes */}
         <Route path="/teacher/dashboard" element={<RoleProtectedRoute allowedRole="teacher"><TeacherDashboard /></RoleProtectedRoute>} />

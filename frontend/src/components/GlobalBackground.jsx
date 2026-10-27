@@ -13,11 +13,11 @@ const GlobalBackground = () => {
       const isGlowing = Math.random() > 0.8;
       newStars.push({
         id: i,
-        left: `\${Math.random() * 100}%`,
-        top: `\${Math.random() * 100}%`,
-        size: isGlowing ? `\${Math.random() * 2 + 1.5}px` : `\${Math.random() * 1 + 0.5}px`,
-        animationDuration: `\${Math.random() * 4 + 3}s`,
-        animationDelay: `\${Math.random() * 5}s`,
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+        size: isGlowing ? `${Math.random() * 2 + 1.5}px` : `${Math.random() * 1 + 0.5}px`,
+        animationDuration: `${Math.random() * 4 + 3}s`,
+        animationDelay: `${Math.random() * 5}s`,
         opacity: isGlowing ? (Math.random() * 0.5 + 0.5) : (Math.random() * 0.4 + 0.1),
         glowing: isGlowing
       });
@@ -72,7 +72,7 @@ const GlobalBackground = () => {
         <div className="cloud cloud-4"></div>
 
         {/* Wind Breeze Follower */}
-        <div className="wind-breeze-container" style={{ transform: `translate(\${delayedMousePos.x}px, \${delayedMousePos.y}px)` }}>
+        <div className="wind-breeze-container" style={{ transform: `translate(${delayedMousePos.x}px, ${delayedMousePos.y}px)` }}>
           <div className="wind-line w-1"></div>
           <div className="wind-line w-2"></div>
           <div className="wind-line w-3"></div>
@@ -92,7 +92,7 @@ const GlobalBackground = () => {
           {stars.map((star) => (
             <div 
               key={star.id}
-              className={`star \${star.glowing ? 'star-glowing' : ''}`}
+              className={`star ${star.glowing ? 'star-glowing' : ''}`}
               style={{
                 left: star.left,
                 top: star.top,
@@ -107,7 +107,7 @@ const GlobalBackground = () => {
         </div>
 
         {/* Trailing Galaxy/Star Cluster */}
-        <div className="mouse-galaxy-container" style={{ transform: `translate(\${delayedMousePos.x}px, \${delayedMousePos.y}px)` }}>
+        <div className="mouse-galaxy-container" style={{ transform: `translate(${delayedMousePos.x}px, ${delayedMousePos.y}px)` }}>
           <div className="mouse-galaxy-glow"></div>
           <div className="mouse-star ms-1"></div>
           <div className="mouse-star ms-2"></div>

@@ -39,6 +39,8 @@ tmp/
 .claude/
 .idea/
 .venv/
+__pycache__/
+*.pyc
 
 # Build & Dist Artifacts
 dist/

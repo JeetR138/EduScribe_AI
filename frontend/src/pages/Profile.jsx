@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
+import API_BASE from '../config';
 import { User, Mail, Lock, Save, ArrowLeft, Camera, BookOpen, Award, Briefcase, GraduationCap, Building2 } from 'lucide-react';
 
 const Profile = () => {
@@ -163,7 +164,7 @@ const Profile = () => {
             >
               {profilePicture ? (
                 <img 
-                  src={profilePicture.startsWith('http') ? profilePicture : `http://localhost:5000\${profilePicture}`} 
+                  src={profilePicture.startsWith('http') ? profilePicture : `${API_BASE}${profilePicture}`} 
                   alt="Avatar" 
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                 />
